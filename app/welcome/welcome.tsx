@@ -1,8 +1,8 @@
-import { Calendar } from "~/components/ui/calendar"
-import { useState } from "react";
+import { useState } from 'react';
+import { Calendar } from '~/components/ui/calendar';
 
 export function Welcome() {
-  const [date, setDate] = useState<Date | undefined>(undefined)
+  const [date, setDate] = useState<Date | undefined>(undefined);
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <Calendar
@@ -15,4 +15,3 @@ export function Welcome() {
     </main>
   );
 }
-
