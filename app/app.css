@@ -141,3 +141,33 @@ body {
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  .mobile-container {
+    @apply mx-auto w-full max-w-md min-h-screen bg-background shadow-lg;
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-shadow-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .text-income {
+    color: hsl(var(--income));
+  }
+
+  .text-expense {
+    color: hsl(var(--expense));
+  }
+
+  .bg-income {
+    background-color: hsl(var(--income));
+  }
+
+  .bg-expense {
+    background-color: hsl(var(--expense));
+  }
+}
