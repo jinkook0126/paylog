@@ -5,12 +5,33 @@ import { prisma } from '~/lib/prisma';
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
-    const categoryId = url.searchParams.get('categoryId');
+    const date = url.searchParams.get('date'); // YYYY-MM 형식
     
+    const whereClause: {
+      created_at?: {
+        gte: Date;
+        lte: Date;
+      };
+    } = {};
+    
+    // 날짜 필터 (월 단위)
+    if (date) {
+      // YYYY-MM 형식 파싱
+      const [year, month] = date.split('-').map(Number);
+      
+      // 해당 월의 첫날 (00:00:00)
+      const startOfMonth = new Date(year, month - 1, 1, 0, 0, 0, 0);
+      
+      // 해당 월의 마지막 날 (23:59:59)
+      const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
+      
+      whereClause.created_at = {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      };
+    }
     const transactions = await prisma.transactions.findMany({
-      where: {
-        ...(categoryId && { category: Number(categoryId) }),
-      },
+      where: whereClause,
       include: {
         categories: {
           select: {
@@ -24,8 +45,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
       orderBy: {
         created_at: 'desc',
       },
+      ...(date ? {} : { take: 5 }), // 날짜가 없으면 최근 5개만 조회
     });
-    
     return Response.json(transactions);
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
