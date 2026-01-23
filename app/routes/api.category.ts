@@ -1,6 +1,5 @@
 import type { ActionFunctionArgs } from 'react-router';
 import { prisma } from '~/lib/prisma';
-import type { Category } from '~/lib/prismaClient';
 
 export async function loader() {
   try {
@@ -19,14 +18,13 @@ export async function loader() {
 }
 
 // POST, PUT, DELETE 처리
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const { method } = request;
-  const { id } = params;
-
+  const body = await request.json();
+  const { name, icon, type, id } = body;
   try {
     if (method === 'POST') {
       // 카테고리 생성
-      const body = (await request.json()) as Omit<Category, 'id'>;
 
       if (!body.name || !body.icon || !body.type) {
         return Response.json(
@@ -35,7 +33,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         );
       }
 
-      const { name, icon, type } = body;
+      
       const category = await prisma.category.create({
         data: {
           name,
@@ -53,14 +51,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
         return Response.json({ error: 'Category ID is required' }, { status: 400 });
       }
 
-      const body = (await request.json()) as Partial<Omit<Category, 'id'>>;
-
       const category = await prisma.category.update({
         where: { id: Number(id) },
         data: {
-          ...(body.name && { name: body.name }),
-          ...(body.icon && { icon: body.icon }),
-          ...(body.type && { type: body.type }),
+          ...(name && { name }),
+          ...(icon && { icon }),
+          ...(type && { type }),
         },
       });
 
@@ -82,7 +78,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error(`Failed to ${method.toLowerCase()} category:`, error);
 
     if (error instanceof Error && error.message.includes('Record to delete does not exist')) {

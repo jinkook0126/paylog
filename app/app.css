@@ -27,7 +27,8 @@ body {
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.72 0.22 175);
-  --primary-foreground: oklch(0.97 0.01 175); /* 흰색에 거의 가까움 */
+  --primary-foreground: oklch(0.97 0.01 175);
+  --primary-background: oklch(0.95 0.05 175);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
   --muted: oklch(0.97 0 0);
@@ -169,5 +170,9 @@ body {
 
   .bg-expense {
     background-color: hsl(var(--expense));
+  }
+
+  .bg-primary-background {
+    background-color: var(--primary-background);
   }
 }
