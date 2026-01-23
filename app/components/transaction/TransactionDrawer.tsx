@@ -2,16 +2,14 @@ import { useState } from "react";
 import {  Plus } from "lucide-react"
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "~/components/ui/drawer"
 import { Button } from "../ui/button"
 import { cn } from "~/lib/utils";
-import ExpenseForm from "./ExpenseForm";
+import TransactionDrawerForm from "./TransactionDrawerForm";
 
 function TransactionDrawer() {
   const [transactionType, setTransactionType] = useState<'expense' | 'income'>('expense');
@@ -31,21 +29,13 @@ function TransactionDrawer() {
           <DrawerHeader>
             <DrawerTitle className="text-xl text-left">거래 추가</DrawerTitle>
           </DrawerHeader>
-          <div className="px-4 mt-2">
+          <div className="px-4 mt-2 mb-4">
             <div className="flex items-center gap-2 mb-6">
               <Button variant="subtle" className={cn("flex-1 py-5 text-lg font-medium", transactionType === 'expense' && "bg-rose-500 text-white")} onClick={() => setTransactionType('expense')}>지출</Button>
               <Button variant="subtle" className={cn("flex-1 py-5 text-lg font-medium", transactionType === 'income' && "bg-indigo-500 text-white")} onClick={() => setTransactionType('income')}>수입</Button>
             </div>
-            {
-              transactionType === 'expense' && <ExpenseForm setOpen={setOpen} />
-            }
+            <TransactionDrawerForm transactionType={transactionType} setOpen={setOpen} />
           </div>
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose>
-              Cancel
-            </DrawerClose>
-          </DrawerFooter>
         </div>
       </DrawerContent>
     </Drawer>

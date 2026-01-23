@@ -6,8 +6,12 @@ import { Button } from "../ui/button";
 import { getCategories } from "~/databases/category";
 import { Input } from "../ui/input";
 
+interface TransactionDrawerFormProps {
+  setOpen: (open: boolean) => void;
+  transactionType: 'expense' | 'income';
+}
 
-function ExpenseForm({ setOpen }: { setOpen: (open: boolean) => void }) {
+function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFormProps) {
   const [categoryId, setCategoryId] = useState<number | undefined>();
   const [imageUrl, setImageUrl] = useState<string | undefined>();
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash' >('card');
@@ -18,17 +22,23 @@ function ExpenseForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   };
   return (
     <div>
-      <p className="text-stone-500 text-md mb-2">결제 수단</p>
-      <div className="flex items-center gap-2 mb-6">
-        <Button variant="subtle" className={cn("flex-1 py-5 text-md font-medium items-center gap-2", paymentMethod === 'card' && "bg-primary text-primary-foreground")} onClick={() => setPaymentMethod('card')}>
-          <CreditCard className="w-4 h-4" />
-          카드
-        </Button>
-        <Button variant="subtle" className={cn("flex-1 py-5 text-md font-medium items-center gap-2", paymentMethod === 'cash' && "bg-primary text-primary-foreground")} onClick={() => setPaymentMethod('cash')}>
-          <Banknote className="w-4 h-4" />
-          현금
-        </Button>
-      </div>
+      {
+        transactionType === 'expense' && (
+        <div className="mb-6">
+          <p className="text-stone-500 text-md mb-2">결제 수단</p>
+          <div className="flex items-center gap-2">
+            <Button variant="subtle" className={cn("flex-1 py-5 text-md font-medium items-center gap-2", paymentMethod === 'card' && "bg-primary text-primary-foreground")} onClick={() => setPaymentMethod('card')}>
+              <CreditCard className="w-4 h-4" />
+              카드
+            </Button>
+            <Button variant="subtle" className={cn("flex-1 py-5 text-md font-medium items-center gap-2", paymentMethod === 'cash' && "bg-primary text-primary-foreground")} onClick={() => setPaymentMethod('cash')}>
+              <Banknote className="w-4 h-4" />
+              현금
+            </Button>
+          </div>
+        </div>
+        )
+      }
       <div className="mb-6">
         <p className="text-stone-500 text-md mb-2">금액</p>
         <div className="relative">
@@ -41,7 +51,7 @@ function ExpenseForm({ setOpen }: { setOpen: (open: boolean) => void }) {
       <div className="mb-6">
         <p className="text-stone-500 text-md mb-2">카테고리</p>
         <div className="grid grid-cols-4 gap-3">
-          {categories?.filter((category) => category.type === 'expense').map((category) => (
+          {categories?.filter((category) => category.type === transactionType).map((category) => (
             <button type="button" key={category.id} className={cn("flex flex-col items-center gap-2 p-3 rounded-xl transition-all bg-muted text-foreground", categoryId === category.id && "bg-primary text-primary-foreground")} onClick={() => setCategoryId(category.id)}>
               <span className="text-2xl">{category.icon}</span>
               <span className="text-xs font-medium">{category.name}</span>
@@ -94,4 +104,4 @@ function ExpenseForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   )
 }
 
-export default ExpenseForm
+export default TransactionDrawerForm
