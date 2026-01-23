@@ -7,4 +7,5 @@ export default [
     route("transactions", "routes/index.transaction.tsx"),
     route("settings", "routes/index.setting.tsx"),
   ]),
+  route("api/category", "routes/api.category.ts"),
 ] satisfies RouteConfig;

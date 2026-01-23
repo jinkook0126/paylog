@@ -1,12 +1,12 @@
-import type { Category } from '@prisma/client';
-import { prisma } from '~/lib/prisma';
-
+import { apiFetchJson } from '~/lib/apiFetch';
+import type { Category } from '~/lib/prismaClient';
 
 export async function getCategories(): Promise<Category[]> {
   try {
-    const categories = await prisma.category.findMany({
-      orderBy: {
-        id: 'asc',
+    const categories = await apiFetchJson<Category[]>('/api/category', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
       },
     });
     return categories;
