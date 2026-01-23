@@ -24,7 +24,7 @@ export async function deleteCategory(id: number): Promise<void> {
   });
 }
 
-export async function addCategory(category: Omit<Category, 'id'>): Promise<Category> {
+export async function addCategory(category: Omit<Category, 'id'|'isActive'>): Promise<Category> {
   const newCategory = await apiFetchJson<Category>(`/api/category`, {
     method: 'POST',
     headers: {

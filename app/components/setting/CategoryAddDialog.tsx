@@ -1,7 +1,5 @@
 import { Loader2, Plus } from "lucide-react"
 import { useState } from "react";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -12,8 +10,7 @@ import {
 import { Button } from "../ui/button"
 import { cn } from "~/lib/utils";
 import { Input } from "../ui/input";
-import type { Category } from "~/lib/prismaClient";
-import { addCategory } from "~/databases/category";
+import { useAddCategoryMutation } from "~/query/category";
 
 const EMOJI_OPTIONS = ['🍔', '☕', '🎬', '🏋️', '✈️', '🎵', '📱', '🎨', '🐕', '💼', '🏠', '🎓', '💝', '🌸', '⚽', '🍕'];
 
@@ -22,31 +19,14 @@ function CategoryAddDialog() {
   const [type, setType] = useState<'expense' | 'income'>('expense');
   const [name, setName] = useState('');
   const [icon, setIcon] = useState('');
-  const queryClient = useQueryClient();
-  const { mutate: addCategoryMutate, isPending} = useMutation({
-    mutationFn: (category: Omit<Category, 'id'>) => addCategory(category),
-    onMutate: (category: Omit<Category, 'id'>) => {
-      queryClient.cancelQueries({ queryKey: ['categories'] });
-      const previous = queryClient.getQueryData<Category[]>(['categories']);
-      queryClient.setQueryData(['categories'], (old: Category[] | undefined) => [...(old ?? []), {...category, id: Date.now()}]);
-      return { previous };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success('카테고리 추가에 성공했습니다.');
-    },
-    onError: (error, category, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(['categories'], context.previous);
-      }
-      toast.error('카테고리 추가에 실패했습니다.');
-    },
-    onSettled: () => {
-      setOpen(false);
-    },
-  });
+  const { mutate: addCategoryMutate, isPending} = useAddCategoryMutation();
+
   const handleAdd = () => {
-    addCategoryMutate({ type, name, icon });
+    try {
+      addCategoryMutate({ type, name, icon });
+    } finally {
+      setOpen(false);
+    }
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

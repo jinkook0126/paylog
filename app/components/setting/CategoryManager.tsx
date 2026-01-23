@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { ChevronUp, ChevronDown, Tag,  Trash2 } from "lucide-react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner"
 import {
   Card,
   CardContent,
@@ -9,36 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import { getCategories, deleteCategory } from "~/databases/category";
-import type { Category } from "~/lib/prismaClient";
 import CategoryAddDialog from "./CategoryAddDialog";
-
+import { useDeleteCategoryMutation, useGetCategoriesQuery } from "~/query/category";
 
 function CategoryManager() {
-  const queryKey = ['categories'];
-  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
-  const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: getCategories });
-  const { mutate: removeCategory } = useMutation({
-    mutationFn: (id: number) => deleteCategory(id),
-    onMutate: async (id: number) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Category[]>(queryKey);
-      queryClient.setQueryData<Category[]>(queryKey, (old) =>
-        (old ?? []).filter((category) => category.id !== id),
-      );
-      return { previous };
-    },
-    onError: (_error, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
-      }
-      toast.error('카테고리 삭제에 실패했습니다.');
-    },
-    onSuccess: () => {
-      toast.success('카테고리 삭제에 성공했습니다.');
-    },
-  });
+  const { data: categories } = useGetCategoriesQuery();
+  const { mutate: removeCategory } = useDeleteCategoryMutation();
+  
   return (
     <Card size="sm" className="overflow-hidden">
       <button

@@ -8,10 +8,11 @@ datasource db {
 }
 
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String
-  icon String
-  type String
+  id       Int     @id @default(autoincrement())
+  name     String
+  icon     String
+  type     String
+  isActive Boolean @default(true)
 
   @@map("categories")
 }
