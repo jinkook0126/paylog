@@ -4,6 +4,9 @@ import { prisma } from '~/lib/prisma';
 export async function loader() {
   try {
     const categories = await prisma.category.findMany({
+      where: {
+        isActive: true,
+      },
       orderBy: {
         id: 'asc',
       },
@@ -68,9 +71,11 @@ export async function action({ request }: ActionFunctionArgs) {
       if (!id) {
         return Response.json({ error: 'Category ID is required' }, { status: 400 });
       }
-
-      await prisma.category.delete({
+      await prisma.category.update({
         where: { id: Number(id) },
+        data: {
+          isActive: false,
+        },
       });
 
       return Response.json({ message: 'Category deleted successfully' }, { status: 200 });
