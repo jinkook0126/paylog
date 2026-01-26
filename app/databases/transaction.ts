@@ -1,9 +1,17 @@
 import { apiFetchJson } from "~/lib/apiFetch";
 import type { Transactions } from "~/lib/prismaClient";
 
-export async function getTransactions(date?: string): Promise<Transactions[]> {
+export interface ITransactionList extends Transactions {
+  categories: {
+    id: number;
+    name: string;
+    icon: string;
+    type: string;
+  };
+}
+export async function getTransactions(date?: string): Promise<ITransactionList[]> {
   try {
-    const transactions = await apiFetchJson<Transactions[]>(`/api/transaction?${date ? `date=${date}` : ''}`,{
+    const transactions = await apiFetchJson<ITransactionList[]>(`/api/transaction?${date ? `date=${date}` : ''}`,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
