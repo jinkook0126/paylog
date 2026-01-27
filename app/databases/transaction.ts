@@ -1,5 +1,5 @@
-import { apiFetchJson } from "~/lib/apiFetch";
-import type { Transactions } from "~/lib/prismaClient";
+import { apiFetchJson } from '~/lib/apiFetch';
+import type { Transactions } from '~/lib/prismaClient';
 
 export interface ITransactionList extends Transactions {
   categories: {
@@ -10,20 +10,26 @@ export interface ITransactionList extends Transactions {
   };
 }
 export async function getTransactions(date?: string): Promise<ITransactionList[]> {
+  console.log(date);
   try {
-    const transactions = await apiFetchJson<ITransactionList[]>(`/api/transaction?${date ? `date=${date}` : ''}`,{
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    const transactions = await apiFetchJson<ITransactionList[]>(
+      `/api/transaction?${date ? `date=${date}` : ''}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
     return transactions;
   } catch (error) {
     console.error(error);
     throw new Error(`Failed to fetch transactions: ${error}`);
   }
 }
-export async function addTransaction(transaction: Omit<Transactions, 'id'|'created_at'>): Promise<void> {
+export async function addTransaction(
+  transaction: Omit<Transactions, 'id' | 'created_at'>,
+): Promise<void> {
   await apiFetchJson<void>(`/api/transaction`, {
     method: 'POST',
     body: JSON.stringify(transaction),
