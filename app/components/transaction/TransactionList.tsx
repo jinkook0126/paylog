@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import type { ITransactionList } from "~/databases/transaction";
+import TransactionItem from "./TransactionItem";
 
 function TransactionList({ list }: { list: ITransactionList[] | undefined}) {
   if (list === undefined || list.length === 0) {
@@ -31,12 +32,9 @@ function TransactionList({ list }: { list: ITransactionList[] | undefined}) {
           <p className="text-sm font-medium text-muted-foreground mb-2 px-2">
             {dayjs(dateKey).format('M월 DD일 dddd')}
           </p>
-          <div className="bg-card rounded-2xl px-4 shadow-card">
+          <div className="bg-card rounded-2xl px-4 shadow-card border border-border/50">
             {grouped[dateKey].map((transaction) => (
-              <div key={transaction.id}>
-                <h1>{transaction.name}</h1>
-                <h1>{transaction.amount}</h1>
-              </div>
+              <TransactionItem key={transaction.id} transaction={transaction} />
             ))}
           </div>
         </div>

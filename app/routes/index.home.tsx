@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useLoaderData } from 'react-router';
 import { getCategories } from '~/databases/category';
 import { queryClient } from '~/lib/query-client';
 import {queryKey as categoryQueryKey} from '~/query/category';
@@ -8,12 +9,19 @@ import TransactionList from '~/components/transaction/TransactionList';
 
 export async function loader() {
   await queryClient.ensureQueryData({ queryKey: categoryQueryKey, queryFn: getCategories })
-  await queryClient.ensureQueryData({ queryKey: ['transactions'], queryFn: ()=>getTransactions() })
-  return null;
+  const transactions = await queryClient.ensureQueryData({ queryKey: ['transactions'], queryFn: ()=>getTransactions() })
+  return {transactions};
 }
 
 function Home() {
-  const { data: transactions } = useQuery({ queryKey: ['transactions'], queryFn: ()=>getTransactions() })
+  const { transactions: loaderTransactions } =
+    useLoaderData<typeof loader>();
+
+  const { data: transactions } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: ()=>getTransactions(),
+    initialData: loaderTransactions,
+  });
   return (
     <div>
       <div className="mb-6">
@@ -22,9 +30,9 @@ function Home() {
       <div className="mb-4">
         <h2 className="text-lg font-semibold px-2">최근 거래</h2>
       </div>
-      {/* <TransactionList
+      <TransactionList
         list={transactions?.slice(0, 5)}
-      /> */}
+      />
     </div>
   );
 }

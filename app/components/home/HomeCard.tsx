@@ -1,6 +1,5 @@
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import type { ITransactionList } from "~/databases/transaction";
-import { Card } from "../ui/card";
 
 function HomeCard({ list }: { list: ITransactionList[] | undefined}) {
   if(list === undefined) return <div>Loading...</div>
@@ -8,7 +7,7 @@ function HomeCard({ list }: { list: ITransactionList[] | undefined}) {
   const expense = list.reduce((acc, item) => item.categories.type === 'expense' ? acc + item.amount : acc, 0);
   const balance = income - expense;
   return (
-    <Card className="p-6">
+    <div className="p-6 border border-border/50 rounded-xl shadow-card">
       <div className="text-center">
         <p className="text-sm text-muted-foreground mb-1">이번 달 잔액</p>
         <p className={`text-3xl font-bold ${balance < 0 && 'text-rose-500'}`}>
@@ -40,7 +39,7 @@ function HomeCard({ list }: { list: ITransactionList[] | undefined}) {
           </p>
         </div>
       </div>
-    </Card>
+    </div>
   )
 }
 
