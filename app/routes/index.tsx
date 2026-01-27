@@ -1,6 +1,7 @@
 import { Outlet } from "react-router"
 import BottomNav from "~/components/BottomNav"
 import MobileLayout from "~/components/MobileLayout"
+import TransactionModal from "~/components/transaction/TransactionModal"
 
 const index = () => (
   <MobileLayout>
@@ -9,7 +10,8 @@ const index = () => (
         <Outlet />
       </div>
     </main>
-    <BottomNav />  
+    <BottomNav />
+    <TransactionModal />
   </MobileLayout>
 )
 

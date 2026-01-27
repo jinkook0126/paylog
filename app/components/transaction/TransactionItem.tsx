@@ -1,10 +1,12 @@
 import type { ITransactionList } from "~/databases/transaction"
+import { useModalStore } from "~/store/modal"
 
 function TransactionItem({ transaction }: { transaction: ITransactionList }) {
   const isExpense = transaction.categories.type === 'expense';
+  const { openModal } = useModalStore();
 
   const onClick = () => {
-    console.log(transaction);
+    openModal(transaction);
   }
 
   return (
