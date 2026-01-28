@@ -1,6 +1,11 @@
+import type { MetaFunction } from 'react-router';
+import AppVersion from '~/components/setting/AppVersion';
+import CategoryManager from '~/components/setting/CategoryManager';
 
-import AppVersion from "~/components/setting/AppVersion"
-import CategoryManager from "~/components/setting/CategoryManager"
+export const meta: MetaFunction = () => [
+  { title: 'paylog - 설정' },
+  { name: 'description', content: 'paylog의 설정 페이지입니다.' },
+];
 
 function SettingView() {
   return (
@@ -9,12 +14,10 @@ function SettingView() {
       <div className="space-y-4">
         <CategoryManager />
         <AppVersion />
-        <p className="text-center text-sm text-muted-foreground py-4">
-          Made with 💚 by 또닥
-      </p>
+        <p className="text-center text-sm text-muted-foreground py-4">Made with 💚 by 또닥</p>
       </div>
     </div>
-  )
+  );
 }
 
-export default SettingView
+export default SettingView;
