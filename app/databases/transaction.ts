@@ -9,11 +9,10 @@ export interface ITransactionList extends Transactions {
     type: string;
   };
 }
-export async function getTransactions(date?: string): Promise<ITransactionList[]> {
-  console.log(date);
+export async function getTransactions(date: string): Promise<ITransactionList[]> {
   try {
     const transactions = await apiFetchJson<ITransactionList[]>(
-      `/api/transaction?${date ? `date=${date}` : ''}`,
+      `/api/transaction?date=${date}`,
       {
         method: 'GET',
         headers: {
