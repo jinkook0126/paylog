@@ -25,12 +25,12 @@ function TransactionDrawer() {
 
   return (
     <Drawer open={drawerOpen} onOpenChange={(open) => !open && closeDrawer()}>
-      <DrawerTrigger className="-top-4 relative">
-        <div className="flex flex-col items-center gap-1 py-2 px-3 rounded-xl transition-all duration-200">
+      <DrawerTrigger className="-top-4 relative" asChild>
+        <Button className="flex flex-col items-center gap-1 py-2 px-3 rounded-xl transition-all duration-200">
           <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-card-lg">
             <Plus className="w-6 h-6 text-primary-foreground" />
           </div>
-        </div>
+        </Button>
       </DrawerTrigger>
       <DrawerContent className="max-w-md mx-auto h-[80vh]">
         <div className="h-full overflow-y-auto">
