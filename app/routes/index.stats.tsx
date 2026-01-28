@@ -1,6 +1,18 @@
+import { useState } from "react"
+import MonthSelector from "~/components/MonthSelector"
+import dayjs from "~/lib/dayjs"
+import StatsContent from "~/components/stats/StatsContent"
+
 function SettingView() {
+  const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
+  const onDateChange = (date: Date) => {
+    setCurrentDate(date);
+  };
   return (
-    <div>Route SettingView</div>
+    <div className="space-y-6">
+      <MonthSelector currentDate={currentDate} onDateChange={onDateChange} />
+      <StatsContent currentDate={currentDate} />
+    </div>
   )
 }
 
