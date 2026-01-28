@@ -29,3 +29,9 @@ export async function addTransaction(transaction: Omit<Transactions, 'id'>): Pro
     body: JSON.stringify(transaction),
   });
 }
+
+export async function deleteTransaction(id: number): Promise<void> {
+  await apiFetchJson<void>(`/api/transaction?id=${id}`, {
+    method: 'DELETE',
+  });
+}

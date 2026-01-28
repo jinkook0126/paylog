@@ -81,6 +81,25 @@ export async function action({ request }: ActionFunctionArgs) {
       return Response.json(transaction, { status: 201 });
     }
 
+    if (method === 'DELETE') {
+      const url = new URL(request.url);
+      const id = url.searchParams.get('id');
+      if (!id) {
+        return Response.json({ error: 'Missing required parameter: id' }, { status: 400 });
+      }
+
+      try {
+        await prisma.transactions.delete({
+          where: {
+            id: Number(id),
+          },
+        });
+      } catch (error) {
+        console.error('Failed to delete transaction:', error);
+        return Response.json({ error: 'Failed to delete transaction' }, { status: 500 });
+      }
+      return Response.json({ success: true }, { status: 200 });
+    }
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
   } catch (error) {
     console.error('Failed to create transaction:', error);

@@ -6,9 +6,17 @@ import {
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { Transactions } from '~/lib/prismaClient';
-import { addTransaction, getTransactions, type ITransactionList } from '~/databases/transaction';
+import {
+  addTransaction,
+  deleteTransaction,
+  getTransactions,
+  type ITransactionList,
+} from '~/databases/transaction';
 import { queryClient } from '~/lib/query-client';
 import dayjs from '~/lib/dayjs';
+import { queryKey as statsQueryKey } from './stats';
+
+export const queryKey = ['transactions'];
 
 export function useAddTransactionMutation(): UseMutationResult<
   void,
@@ -16,11 +24,11 @@ export function useAddTransactionMutation(): UseMutationResult<
   Omit<Transactions, 'id'>
 > {
   const queryMonth = dayjs().format('YYYY-MM');
-  const queryKey = ['transactions', queryMonth];
+  const transactionQueryKey = [...queryKey, queryMonth];
   return useMutation({
     mutationFn: addTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: transactionQueryKey });
       toast.success('거래 추가에 성공했습니다.');
     },
     onError: () => {
@@ -33,9 +41,28 @@ export function useGetTransactionsQuery(
   date: string,
 ): UseSuspenseQueryResult<ITransactionList[], Error> {
   return useSuspenseQuery<ITransactionList[], Error>({
-    queryKey: ['transactions', date],
+    queryKey: [...queryKey, date],
     queryFn: () => getTransactions(date),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
+  });
+}
+
+export function useDeleteTransactionMutation(): UseMutationResult<
+  void,
+  Error,
+  { id: number; date: Date }
+> {
+  return useMutation({
+    mutationFn: ({ id }) => deleteTransaction(id),
+    onSuccess: (_, { date }) => {
+      console.log(date, dayjs(date).format('YYYY-MM'), dayjs(date).format('YYYY'));
+      queryClient.invalidateQueries({ queryKey: [...queryKey, dayjs(date).format('YYYY-MM')] });
+      queryClient.invalidateQueries({ queryKey: [...statsQueryKey, dayjs(date).format('YYYY')] });
+      toast.success('거래 삭제에 성공했습니다.');
+    },
+    onError: () => {
+      toast.error('거래 삭제에 실패했습니다.');
+    },
   });
 }

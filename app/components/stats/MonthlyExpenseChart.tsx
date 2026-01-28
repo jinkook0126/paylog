@@ -22,13 +22,11 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function MonthlyExpenseChart({ currentDate }: { currentDate: Date }) {
-  const queryMonth = dayjs(currentDate).format('YYYY');
-  const { data: stats } = useGetStatsQuery(queryMonth);
+  const queryYear = dayjs(currentDate).format('YYYY');
+  const { data: stats } = useGetStatsQuery(queryYear);
   return (
     <div className="rounded-2xl p-4 border border-border/50">
-      <p className="text-sm font-medium text-muted-foreground mb-4">
-        {queryMonth}년 월별 지출 추이
-      </p>
+      <p className="text-sm font-medium text-muted-foreground mb-4">{queryYear}년 월별 지출 추이</p>
       <ChartContainer config={chartConfig}>
         <BarChart accessibilityLayer data={stats}>
           <CartesianGrid vertical={false} />
