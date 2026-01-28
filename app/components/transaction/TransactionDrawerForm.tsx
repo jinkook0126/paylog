@@ -1,15 +1,15 @@
-import { useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { CreditCard, Banknote, X , Camera, Loader2 } from 'lucide-react'
-import { cn } from "~/lib/utils";
-import { Button } from "../ui/button";
-import { getCategories } from "~/databases/category";
-import { Input } from "../ui/input";
-import { useAddTransactionMutation } from "~/query/transaction";
-import { Field, FieldContent, FieldError } from "../ui/field";
+import { useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { CreditCard, Banknote, X, Camera, Loader2 } from 'lucide-react';
+import { cn } from '~/lib/utils';
+import { Button } from '../ui/button';
+import { getCategories } from '~/databases/category';
+import { Input } from '../ui/input';
+import { useAddTransactionMutation } from '~/query/transaction';
+import { Field, FieldContent, FieldError } from '../ui/field';
 
 interface TransactionDrawerFormProps {
   setOpen: (open: boolean) => void;
@@ -18,7 +18,8 @@ interface TransactionDrawerFormProps {
 
 const transactionSchema = z.object({
   paymentMethod: z.enum(['card', 'cash']).optional(),
-  amount: z.number()
+  amount: z
+    .number()
     .refine((val) => !Number.isNaN(val), {
       message: '금액을 입력해주세요',
     })
@@ -39,7 +40,7 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: getCategories });
   const { mutate: addTransactionMutate, isPending } = useAddTransactionMutation();
-  
+
   const {
     register,
     handleSubmit,
@@ -69,20 +70,23 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
   };
 
   const onSubmit = (data: TransactionFormData) => {
-
-    const payment = transactionType === 'expense' ? (data.paymentMethod || 'card') : 'cash';
-    addTransactionMutate({
-      category: data.category,
-      amount: data.amount,
-      paymentMethod: payment,
-      picture: data.picture ?? null,
-      memo: data.memo ?? null,
-      name: data.name,
-    }, {
-      onSuccess: () => {
-        setOpen(false);
+    const payment = transactionType === 'expense' ? data.paymentMethod || 'card' : 'cash';
+    addTransactionMutate(
+      {
+        category: data.category,
+        amount: data.amount,
+        paymentMethod: payment,
+        picture: data.picture ?? null,
+        memo: data.memo ?? null,
+        name: data.name,
+        created_at: new Date(),
       },
-    });
+      {
+        onSuccess: () => {
+          setOpen(false);
+        },
+      },
+    );
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -99,8 +103,8 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
                     type="button"
                     variant="subtle"
                     className={cn(
-                      "flex-1 py-5 text-md font-medium items-center gap-2",
-                      field.value === 'card' && "bg-primary text-primary-foreground"
+                      'flex-1 py-5 text-md font-medium items-center gap-2',
+                      field.value === 'card' && 'bg-primary text-primary-foreground',
                     )}
                     onClick={() => field.onChange('card')}
                   >
@@ -111,8 +115,8 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
                     type="button"
                     variant="subtle"
                     className={cn(
-                      "flex-1 py-5 text-md font-medium items-center gap-2",
-                      field.value === 'cash' && "bg-primary text-primary-foreground"
+                      'flex-1 py-5 text-md font-medium items-center gap-2',
+                      field.value === 'cash' && 'bg-primary text-primary-foreground',
                     )}
                     onClick={() => field.onChange('cash')}
                   >
@@ -126,7 +130,7 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
           </FieldContent>
         </Field>
       )}
-      
+
       <Field className="mb-6">
         <p className="text-stone-500 text-md">금액</p>
         <FieldContent>
@@ -134,20 +138,23 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
             <Input
               type="number"
               className={cn(
-                "text-xl font-bold h-12 pr-8 text-right",
-                errors.amount && "border-destructive"
+                'text-xl font-bold h-12 pr-8 text-right',
+                errors.amount && 'border-destructive',
               )}
               inputMode="numeric"
               placeholder="0"
               value={watch('amount') || ''}
-              {...register('amount', { valueAsNumber: true,onChange: (e) => {
-                const { value } = e.target;
-                if (value === '' || Number.isNaN(Number(value))) {
-                  setValue('amount', 0);
-                } else {
-                  setValue('amount', Number(value));
-                }
-              } })}
+              {...register('amount', {
+                valueAsNumber: true,
+                onChange: (e) => {
+                  const { value } = e.target;
+                  if (value === '' || Number.isNaN(Number(value))) {
+                    setValue('amount', 0);
+                  } else {
+                    setValue('amount', Number(value));
+                  }
+                },
+              })}
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-500 text-md">
               원
@@ -165,20 +172,22 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
             control={control}
             render={({ field }) => (
               <div className="grid grid-cols-4 gap-3">
-                {categories?.filter((cat) => cat.type === transactionType).map((cat) => (
-                  <button
-                    type="button"
-                    key={cat.id}
-                    className={cn(
-                      "flex flex-col items-center gap-2 p-3 rounded-xl transition-all bg-muted text-foreground",
-                      field.value === cat.id && "bg-primary text-primary-foreground"
-                    )}
-                    onClick={() => field.onChange(cat.id)}
-                  >
-                    <span className="text-2xl">{cat.icon}</span>
-                    <span className="text-xs font-medium">{cat.name}</span>
-                  </button>
-                ))}
+                {categories
+                  ?.filter((cat) => cat.type === transactionType)
+                  .map((cat) => (
+                    <button
+                      type="button"
+                      key={cat.id}
+                      className={cn(
+                        'flex flex-col items-center gap-2 p-3 rounded-xl transition-all bg-muted text-foreground',
+                        field.value === cat.id && 'bg-primary text-primary-foreground',
+                      )}
+                      onClick={() => field.onChange(cat.id)}
+                    >
+                      <span className="text-2xl">{cat.icon}</span>
+                      <span className="text-xs font-medium">{cat.name}</span>
+                    </button>
+                  ))}
               </div>
             )}
           />
@@ -191,7 +200,7 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
         <FieldContent>
           <Input
             type="text"
-            className={cn("text-lg h-12", errors.name && "border-destructive")}
+            className={cn('text-lg h-12', errors.name && 'border-destructive')}
             placeholder="내용을 입력해주세요"
             {...register('name')}
           />
@@ -264,7 +273,7 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
         {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : '추가하기'}
       </Button>
     </form>
-  )
+  );
 }
 
-export default TransactionDrawerForm
+export default TransactionDrawerForm;

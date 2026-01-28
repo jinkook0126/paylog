@@ -115,6 +115,7 @@ body {
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-background: var(--primary-background);
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
@@ -170,9 +171,5 @@ body {
 
   .bg-expense {
     background-color: hsl(var(--expense));
-  }
-
-  .bg-primary-background {
-    background-color: var(--primary-background);
   }
 }

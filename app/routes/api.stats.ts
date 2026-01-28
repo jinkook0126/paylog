@@ -7,7 +7,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const year = url.searchParams.get('year'); // YYYY 형식
-console.log(year, 'server-year');
     if (!year) {
       return Response.json({ error: 'Year parameter is required' }, { status: 400 });
     }

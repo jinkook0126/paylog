@@ -7,7 +7,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const date = url.searchParams.get('date'); // YYYY-MM 형식
-    console.log(date, 'date');
     const base = dayjs(date, 'YYYY-MM');
     const startOfMonth = base.startOf('month');
     const endOfMonth = base.add(1, 'month').startOf('month');
