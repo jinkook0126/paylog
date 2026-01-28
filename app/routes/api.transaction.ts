@@ -46,7 +46,7 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     if (method === 'POST') {
       const body = await request.json();
-      const { name, category, amount, memo, picture, paymentMethod } = body;
+      const { name, category, amount, memo, picture, paymentMethod, created_at: createdAt } = body;
 
       // 필수 필드 검증
       if (!name || !category || amount === undefined) {
@@ -64,6 +64,7 @@ export async function action({ request }: ActionFunctionArgs) {
           memo: memo || null,
           picture: picture || null,
           paymentMethod,
+          created_at: createdAt,
         },
         include: {
           categories: {

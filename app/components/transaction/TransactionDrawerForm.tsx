@@ -10,6 +10,8 @@ import { getCategories } from '~/databases/category';
 import { Input } from '../ui/input';
 import { useAddTransactionMutation } from '~/query/transaction';
 import { Field, FieldContent, FieldError } from '../ui/field';
+import DatePicker from '../DatePicker';
+import dayjs from '~/lib/dayjs';
 
 interface TransactionDrawerFormProps {
   setOpen: (open: boolean) => void;
@@ -32,6 +34,7 @@ const transactionSchema = z.object({
   name: z.string().min(1, '내용을 입력해주세요').trim(),
   memo: z.string().optional(),
   picture: z.string().nullable().optional(),
+  date: z.date(),
 });
 
 type TransactionFormData = z.infer<typeof transactionSchema>;
@@ -57,6 +60,7 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
       name: '',
       memo: '',
       picture: null,
+      date: dayjs().toDate(),
     },
   });
 
@@ -79,7 +83,7 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
         picture: data.picture ?? null,
         memo: data.memo ?? null,
         name: data.name,
-        created_at: new Date(),
+        created_at: data.date,
       },
       {
         onSuccess: () => {
@@ -130,7 +134,17 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
           </FieldContent>
         </Field>
       )}
-
+      <Field className="mb-6">
+        <p className="text-stone-500 text-md">날짜</p>
+        <FieldContent>
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
+          />
+          <FieldError errors={errors.date ? [errors.date] : []} />
+        </FieldContent>
+      </Field>
       <Field className="mb-6">
         <p className="text-stone-500 text-md">금액</p>
         <FieldContent>
