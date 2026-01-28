@@ -100,6 +100,44 @@ export async function action({ request }: ActionFunctionArgs) {
       }
       return Response.json({ success: true }, { status: 200 });
     }
+
+    if (method === 'PUT') {
+      const body = await request.json();
+      const {
+        id,
+        name,
+        category,
+        amount,
+        memo,
+        picture,
+        paymentMethod,
+        created_at: createdAt,
+      } = body;
+      if (!id || !name || !category || amount === undefined) {
+        return Response.json(
+          { error: 'Missing required fields: id, name, category, amount' },
+          { status: 400 },
+        );
+      }
+      try {
+        await prisma.transactions.update({
+          where: { id: Number(id) },
+          data: {
+            name,
+            category: Number(category),
+            amount: Number(amount),
+            memo: memo || null,
+            picture: picture || null,
+            paymentMethod,
+            created_at: createdAt,
+          },
+        });
+      } catch (error) {
+        console.error('Failed to update transaction:', error);
+        return Response.json({ error: 'Failed to update transaction' }, { status: 500 });
+      }
+      return Response.json({ success: true }, { status: 200 });
+    }
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
   } catch (error) {
     console.error('Failed to create transaction:', error);

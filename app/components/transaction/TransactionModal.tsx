@@ -15,9 +15,11 @@ import {
 } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { useDeleteTransactionMutation } from '~/query/transaction';
+import { useDrawerStore } from '~/store/drawer';
 
 function TransactionModal() {
   const { open, transaction, closeModal } = useModalStore();
+  const { openDrawer } = useDrawerStore();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { mutate: deleteTransactionMutate } = useDeleteTransactionMutation();
   if (!transaction) return null;
@@ -37,7 +39,8 @@ function TransactionModal() {
     );
   };
   const handleEdit = () => {
-    console.log('edit');
+    openDrawer(transaction);
+    closeModal();
   };
 
   return (

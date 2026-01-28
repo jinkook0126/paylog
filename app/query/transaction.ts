@@ -10,6 +10,7 @@ import {
   addTransaction,
   deleteTransaction,
   getTransactions,
+  updateTransaction,
   type ITransactionList,
 } from '~/databases/transaction';
 import { queryClient } from '~/lib/query-client';
@@ -56,13 +57,30 @@ export function useDeleteTransactionMutation(): UseMutationResult<
   return useMutation({
     mutationFn: ({ id }) => deleteTransaction(id),
     onSuccess: (_, { date }) => {
-      console.log(date, dayjs(date).format('YYYY-MM'), dayjs(date).format('YYYY'));
       queryClient.invalidateQueries({ queryKey: [...queryKey, dayjs(date).format('YYYY-MM')] });
       queryClient.invalidateQueries({ queryKey: [...statsQueryKey, dayjs(date).format('YYYY')] });
       toast.success('거래 삭제에 성공했습니다.');
     },
     onError: () => {
       toast.error('거래 삭제에 실패했습니다.');
+    },
+  });
+}
+
+export function useUpdateTransactionMutation(): UseMutationResult<void, Error, Transactions> {
+  return useMutation({
+    mutationFn: updateTransaction,
+    onSuccess: (_, transaction) => {
+      queryClient.invalidateQueries({
+        queryKey: [...queryKey, dayjs(transaction.created_at).format('YYYY-MM')],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [...statsQueryKey, dayjs(transaction.created_at).format('YYYY')],
+      });
+      toast.success('거래 수정에 성공했습니다.');
+    },
+    onError: () => {
+      toast.error('거래 수정에 실패했습니다.');
     },
   });
 }

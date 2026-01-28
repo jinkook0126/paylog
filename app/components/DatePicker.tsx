@@ -9,7 +9,6 @@ import dayjs from '~/lib/dayjs';
 function DatePicker({ date, onChange }: { date: Date; onChange: (date: Date) => void }) {
   const [open, setOpen] = useState(false);
   const handleChange = (selectedDate: Date) => {
-    console.log('date', selectedDate);
     onChange(selectedDate);
     setOpen(false);
   };

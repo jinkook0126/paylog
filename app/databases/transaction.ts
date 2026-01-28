@@ -35,3 +35,10 @@ export async function deleteTransaction(id: number): Promise<void> {
     method: 'DELETE',
   });
 }
+
+export async function updateTransaction(transaction: Transactions): Promise<void> {
+  await apiFetchJson<void>(`/api/transaction`, {
+    method: 'PUT',
+    body: JSON.stringify(transaction),
+  });
+}

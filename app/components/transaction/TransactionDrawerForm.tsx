@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,14 +8,16 @@ import { cn } from '~/lib/utils';
 import { Button } from '../ui/button';
 import { getCategories } from '~/databases/category';
 import { Input } from '../ui/input';
-import { useAddTransactionMutation } from '~/query/transaction';
+import { useAddTransactionMutation, useUpdateTransactionMutation } from '~/query/transaction';
 import { Field, FieldContent, FieldError } from '../ui/field';
 import DatePicker from '../DatePicker';
 import dayjs from '~/lib/dayjs';
+import type { ITransactionList } from '~/databases/transaction';
 
 interface TransactionDrawerFormProps {
   setOpen: (open: boolean) => void;
   transactionType: 'expense' | 'income';
+  transaction: ITransactionList | null;
 }
 
 const transactionSchema = z.object({
@@ -39,17 +41,22 @@ const transactionSchema = z.object({
 
 type TransactionFormData = z.infer<typeof transactionSchema>;
 
-function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFormProps) {
+function TransactionDrawerForm({
+  setOpen,
+  transactionType,
+  transaction,
+}: TransactionDrawerFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: getCategories });
-  const { mutate: addTransactionMutate, isPending } = useAddTransactionMutation();
-
+  const { mutate: addTransactionMutate, isPending: isAdding } = useAddTransactionMutation();
+  const { mutate: updateTransactionMutate, isPending: isUpdating } = useUpdateTransactionMutation();
   const {
     register,
     handleSubmit,
     control,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
@@ -63,6 +70,31 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
       date: dayjs().toDate(),
     },
   });
+  const btnText = transaction ? '수정하기' : '추가하기';
+  // transaction이 있으면 폼에 기본값 설정
+  useEffect(() => {
+    if (transaction) {
+      reset({
+        paymentMethod: (transaction.paymentMethod as 'card' | 'cash') || 'card',
+        amount: transaction.amount,
+        category: transaction.category,
+        name: transaction.name,
+        memo: transaction.memo || '',
+        picture: transaction.picture || null,
+        date: dayjs(transaction.created_at).toDate(),
+      });
+    } else {
+      reset({
+        paymentMethod: 'card',
+        amount: 0,
+        category: 0,
+        name: '',
+        memo: '',
+        picture: null,
+        date: dayjs().toDate(),
+      });
+    }
+  }, [transaction, reset]);
 
   const picture = watch('picture');
 
@@ -75,22 +107,34 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
 
   const onSubmit = (data: TransactionFormData) => {
     const payment = transactionType === 'expense' ? data.paymentMethod || 'card' : 'cash';
-    addTransactionMutate(
-      {
-        category: data.category,
-        amount: data.amount,
-        paymentMethod: payment,
-        picture: data.picture ?? null,
-        memo: data.memo ?? null,
-        name: data.name,
-        created_at: data.date,
-      },
-      {
+    const formData = {
+      category: data.category,
+      amount: data.amount,
+      paymentMethod: payment,
+      picture: data.picture ?? null,
+      memo: data.memo ?? null,
+      name: data.name,
+      created_at: data.date,
+    };
+    if (transaction) {
+      updateTransactionMutate(
+        {
+          id: transaction.id,
+          ...formData,
+        },
+        {
+          onSuccess: () => {
+            setOpen(false);
+          },
+        },
+      );
+    } else {
+      addTransactionMutate(formData, {
         onSuccess: () => {
           setOpen(false);
         },
-      },
-    );
+      });
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -281,10 +325,10 @@ function TransactionDrawerForm({ setOpen, transactionType }: TransactionDrawerFo
       <Button
         type="submit"
         variant="default"
-        disabled={isPending}
+        disabled={isAdding || isUpdating}
         className="w-full h-14 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : '추가하기'}
+        {isAdding || isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : btnText}
       </Button>
     </form>
   );
