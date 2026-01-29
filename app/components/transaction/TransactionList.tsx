@@ -3,6 +3,15 @@ import type { ITransactionList } from '~/databases/transaction';
 import TransactionItem from './TransactionItem';
 
 function TransactionList({ list }: { list: ITransactionList[] }) {
+  if (list.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+        <p className="text-4xl mb-4">📝</p>
+        <p>거래 내역이 없습니다</p>
+        <p className="text-sm">+ 버튼을 눌러 추가해보세요</p>
+      </div>
+    );
+  }
   return (
     <div>
       {list.map((item) => (
