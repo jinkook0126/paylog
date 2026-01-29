@@ -24,17 +24,15 @@ function TransactionList({ list }: { list: ITransactionList[] }) {
     },
     {} as Record<string, ITransactionList[]>,
   );
-  const sortedDates = Object.keys(grouped).sort(
-    (a, b) => dayjs(b, 'YYYY-MM-DD').valueOf() - dayjs(a, 'YYYY-MM-DD').valueOf(),
-  );
+  const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
+  console.log(sortedDates, 'sortedDates');
   return (
     <div className="space-y-6">
       {sortedDates.map((dateKey) => (
         <div key={dateKey}>
           <p className="text-sm font-medium text-muted-foreground mb-2 px-2">
-            {/* {dayjs(dateKey).format('M월 DD일 dddd')} */}
-            hello world
+            {dayjs(dateKey).format('M월 DD일 dddd')}
           </p>
         </div>
       ))}
