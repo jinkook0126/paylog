@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { Banknote, CreditCard, FileText, Pencil, Trash2 } from 'lucide-react';
+import { Banknote, CreditCard, FileText, ImageIcon, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { useModalStore } from '~/store/modal';
@@ -88,6 +88,21 @@ function TransactionModal() {
                 </p>
                 <div className="bg-muted rounded-xl p-4">
                   <p className="text-foreground whitespace-pre-wrap">{transaction.memo}</p>
+                </div>
+              </div>
+            )}
+            {transaction.picture && (
+              <div>
+                <p className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
+                  <ImageIcon className="w-4 h-4" />
+                  첨부 이미지
+                </p>
+                <div className="rounded-xl overflow-hidden bg-muted">
+                  <img
+                    src={transaction.picture}
+                    alt="거래 이미지"
+                    className="w-full h-48 object-cover"
+                  />
                 </div>
               </div>
             )}

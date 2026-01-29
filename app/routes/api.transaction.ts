@@ -1,6 +1,36 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
+import { createClient } from '@supabase/supabase-js';
 import { prisma } from '~/lib/prisma';
 import dayjs from '~/lib/dayjs';
+
+const supabase = createClient(process.env.SUPABASE_URL || '', process.env.SUPABASE_ANON_KEY || '');
+
+async function uploadImage(base64: string) {
+  const matches = base64.match(/^data:(image\/\w+);base64,(.+)$/);
+
+  if (!matches) {
+    throw new Error('Invalid base64 image format');
+  }
+
+  const mimeType = matches[1]; // image/jpeg, image/png
+  const data = matches[2];
+  const buffer = Buffer.from(data, 'base64');
+  const extension = mimeType.split('/')[1]; // jpeg, png
+  const fileName = `${crypto.randomUUID()}.${extension}`;
+
+  const { error: uploadError } = await supabase.storage.from('image').upload(fileName, buffer, {
+    contentType: mimeType,
+  });
+  if (uploadError) {
+    throw uploadError;
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from('image').getPublicUrl(fileName);
+
+  return publicUrl;
+}
 
 // GET: 거래 목록 조회
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -55,6 +85,10 @@ export async function action({ request }: ActionFunctionArgs) {
           { status: 400 },
         );
       }
+      let pictureUrl = null;
+      if (picture) {
+        pictureUrl = await uploadImage(picture);
+      }
 
       const transaction = await prisma.transactions.create({
         data: {
@@ -62,7 +96,7 @@ export async function action({ request }: ActionFunctionArgs) {
           category: Number(category),
           amount: Number(amount),
           memo: memo || null,
-          picture: picture || null,
+          picture: pictureUrl || null,
           paymentMethod,
           created_at: createdAt,
         },
@@ -87,7 +121,18 @@ export async function action({ request }: ActionFunctionArgs) {
       if (!id) {
         return Response.json({ error: 'Missing required parameter: id' }, { status: 400 });
       }
-
+      const transaction = await prisma.transactions.findUnique({
+        where: {
+          id: Number(id),
+        },
+      });
+      if (transaction?.picture) {
+        const path = transaction.picture.split('/').pop();
+        const { error: deleteError } = await supabase.storage.from('image').remove([path!]);
+        if (deleteError) {
+          throw deleteError;
+        }
+      }
       try {
         await prisma.transactions.delete({
           where: {
@@ -118,6 +163,20 @@ export async function action({ request }: ActionFunctionArgs) {
           { error: 'Missing required fields: id, name, category, amount' },
           { status: 400 },
         );
+      }
+      const transaction = await prisma.transactions.findUnique({
+        where: {
+          id: Number(id),
+        },
+      });
+      let pictureUrl = picture;
+
+      if (pictureUrl !== transaction?.picture) {
+        if (transaction?.picture) {
+          const path = transaction.picture.split('/').pop();
+          await supabase.storage.from('image').remove([path!]);
+        }
+        pictureUrl = await uploadImage(pictureUrl!);
       }
       try {
         await prisma.transactions.update({
