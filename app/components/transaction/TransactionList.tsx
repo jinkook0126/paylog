@@ -34,7 +34,7 @@ function TransactionList({ list }: { list: ITransactionList[] | undefined }) {
       {sortedDates.map((dateKey) => (
         <div key={dateKey}>
           <p className="text-sm font-medium text-muted-foreground mb-2 px-2">
-            {dayjs(dateKey).format('M월 DD일 dddd')}
+            {/* {dayjs(dateKey).format('M월 DD일 dddd')} */}혹시 너냐?
           </p>
           <div className="rounded-2xl px-4 border border-border/50">
             {grouped[dateKey].map((transaction) => (
