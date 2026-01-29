@@ -36,7 +36,7 @@ function Home() {
       <div className="mb-4">
         <h2 className="text-lg font-semibold px-2">최근 거래</h2>
       </div>
-      {/* <TransactionList list={transactions?.slice(0, 5)} /> */}
+      <TransactionList list={transactions?.slice(0, 5)} />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import type { ITransactionList } from '~/databases/transaction';
 import TransactionItem from './TransactionItem';
 
 function TransactionList({ list }: { list: ITransactionList[] | undefined }) {
+  console.log('[TransactionList module evaluated]', list);
   if (list === undefined || list.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
