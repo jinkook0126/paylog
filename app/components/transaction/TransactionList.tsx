@@ -25,7 +25,7 @@ function TransactionList({ list }: { list: ITransactionList[] }) {
     {} as Record<string, ITransactionList[]>,
   );
   const sortedDates = Object.keys(grouped).sort(
-    (a, b) => new Date(b).getTime() - new Date(a).getTime(),
+    (a, b) => dayjs(b, 'YYYY-MM-DD').valueOf() - dayjs(a, 'YYYY-MM-DD').valueOf(),
   );
 
   return (
