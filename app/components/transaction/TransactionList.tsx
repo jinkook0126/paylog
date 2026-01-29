@@ -26,7 +26,7 @@ function TransactionList({ list }: { list: ITransactionList[] }) {
   );
   const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
-  console.log(sortedDates, 'sortedDates');
+  console.log(sortedDates, list, 'sortedDates');
   return (
     <div className="space-y-6">
       {sortedDates.map((dateKey) => (
