@@ -1,5 +1,6 @@
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import type { ITransactionList } from '~/databases/transaction';
+import { formatKRW } from '~/lib/utils';
 
 function HomeCard({ list }: { list: ITransactionList[] | undefined }) {
   if (list === undefined) return <div>Loading...</div>;
@@ -18,7 +19,7 @@ function HomeCard({ list }: { list: ITransactionList[] | undefined }) {
         <p className="text-sm text-muted-foreground mb-1">이번 달 잔액</p>
         <p className={`text-3xl font-bold ${balance < 0 && 'text-rose-500'}`}>
           {balance >= 0 ? '+' : ''}
-          {balance.toLocaleString()}원
+          {formatKRW(balance)}원
         </p>
       </div>
       <div className="flex gap-4">
@@ -29,7 +30,7 @@ function HomeCard({ list }: { list: ITransactionList[] | undefined }) {
             </div>
             <span className="text-sm text-muted-foreground">수입</span>
           </div>
-          <p className="text-lg font-semibold text-indigo-500">+{income.toLocaleString()}원</p>
+          <p className="text-lg font-semibold text-indigo-500">+{formatKRW(income)}원</p>
         </div>
 
         <div className="flex-1 bg-primary/10 rounded-xl p-4">
@@ -39,7 +40,7 @@ function HomeCard({ list }: { list: ITransactionList[] | undefined }) {
             </div>
             <span className="text-sm text-muted-foreground">지출</span>
           </div>
-          <p className="text-lg font-semibold text-rose-500">-{expense.toLocaleString()}원</p>
+          <p className="text-lg font-semibold text-rose-500">-{formatKRW(expense)}원</p>
         </div>
       </div>
     </div>

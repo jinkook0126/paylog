@@ -1,4 +1,5 @@
 import type { ITransactionList } from '~/databases/transaction';
+import { formatKRW } from '~/lib/utils';
 
 function MonthlySummary({ list }: { list: ITransactionList[] }) {
   const totalIncome = list.reduce((acc, item) => {
@@ -17,11 +18,11 @@ function MonthlySummary({ list }: { list: ITransactionList[] }) {
     <div className="grid grid-cols-2 gap-3">
       <div className="rounded-xl p-4 border border-border/50">
         <p className="text-sm text-muted-foreground mb-1">이번 달 수입</p>
-        <p className="text-xl font-bold text-indigo-500">+{totalIncome.toLocaleString()}원</p>
+        <p className="text-xl font-bold text-indigo-500">+{formatKRW(totalIncome)}원</p>
       </div>
       <div className="rounded-xl p-4 border border-border/50">
         <p className="text-sm text-muted-foreground mb-1">이번 달 지출</p>
-        <p className="text-xl font-bold text-rose-500">-{totalExpense.toLocaleString()}원</p>
+        <p className="text-xl font-bold text-rose-500">-{formatKRW(totalExpense)}원</p>
       </div>
     </div>
   );

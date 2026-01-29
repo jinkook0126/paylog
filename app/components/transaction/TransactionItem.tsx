@@ -1,5 +1,6 @@
-import type { ITransactionList } from "~/databases/transaction"
-import { useModalStore } from "~/store/modal"
+import type { ITransactionList } from '~/databases/transaction';
+import { useModalStore } from '~/store/modal';
+import { formatKRW } from '~/lib/utils';
 
 function TransactionItem({ transaction }: { transaction: ITransactionList }) {
   const isExpense = transaction.categories.type === 'expense';
@@ -7,7 +8,7 @@ function TransactionItem({ transaction }: { transaction: ITransactionList }) {
 
   const onClick = () => {
     openModal(transaction);
-  }
+  };
 
   return (
     <button
@@ -18,21 +19,20 @@ function TransactionItem({ transaction }: { transaction: ITransactionList }) {
       <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl">
         {transaction.categories.icon || '💫'}
       </div>
-      
+
       <div className="flex-1 min-w-0">
         <p className="font-medium text-foreground truncate">
           {transaction.name || transaction.categories.name}
         </p>
-        <p className="text-sm text-muted-foreground">
-          {transaction.categories.name}
-        </p>
+        <p className="text-sm text-muted-foreground">{transaction.categories.name}</p>
       </div>
-      
+
       <p className={`font-semibold ${isExpense ? 'text-rose-500' : 'text-indigo-500'}`}>
-        {isExpense ? '-' : '+'}{transaction.amount.toLocaleString()}원
+        {isExpense ? '-' : '+'}
+        {formatKRW(transaction.amount)}원
       </p>
     </button>
-  )
+  );
 }
 
-export default TransactionItem
+export default TransactionItem;

@@ -16,6 +16,7 @@ import { Button } from '../ui/button';
 import { useDeleteTransactionMutation } from '~/query/transaction';
 import { useDrawerStore } from '~/store/drawer';
 import dayjs from '~/lib/dayjs';
+import { formatKRW } from '~/lib/utils';
 
 function TransactionModal() {
   const { open, transaction, closeModal } = useModalStore();
@@ -59,7 +60,7 @@ function TransactionModal() {
                 className={`text-3xl font-bold ${isExpense ? 'text-rose-500' : 'text-indigo-500'}`}
               >
                 {isExpense ? '-' : '+'}
-                {transaction.amount.toLocaleString()}원
+                {formatKRW(transaction.amount)}원
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 {dayjs(transaction.created_at).format('YYYY년 M월 D일 dddd')}

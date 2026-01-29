@@ -1,4 +1,5 @@
-import type { ITransactionList } from "~/databases/transaction";
+import type { ITransactionList } from '~/databases/transaction';
+import { formatKRW } from '~/lib/utils';
 
 function MonthlyCategoryExpense({ list }: { list: ITransactionList[] }) {
   const totalExpense = list.reduce((acc, item) => {
@@ -8,22 +9,29 @@ function MonthlyCategoryExpense({ list }: { list: ITransactionList[] }) {
     return acc;
   }, 0);
 
-  const groupedCategories = list.filter((item) => item.categories.type === 'expense').reduce((acc, item) => {
-    if(Object.hasOwn(acc, item.categories.id)) {
-      acc[item.categories.id].amount += item.amount;
-    } else {
-      acc[item.categories.id] = {
-        amount: item.amount,
-        name: item.categories.name,
-        icon: item.categories.icon,
-      };
-    }
-    return acc;
-  }, {} as Record<number, { amount: number, name: string, icon: string }>);
-  const stats = Object.values(groupedCategories).map((category) => ({
-    ...category,
-    percentage: totalExpense > 0 ? (category.amount / totalExpense) * 100 : 0,
-  })).sort((a, b) => b.percentage - a.percentage);
+  const groupedCategories = list
+    .filter((item) => item.categories.type === 'expense')
+    .reduce(
+      (acc, item) => {
+        if (Object.hasOwn(acc, item.categories.id)) {
+          acc[item.categories.id].amount += item.amount;
+        } else {
+          acc[item.categories.id] = {
+            amount: item.amount,
+            name: item.categories.name,
+            icon: item.categories.icon,
+          };
+        }
+        return acc;
+      },
+      {} as Record<number, { amount: number; name: string; icon: string }>,
+    );
+  const stats = Object.values(groupedCategories)
+    .map((category) => ({
+      ...category,
+      percentage: totalExpense > 0 ? (category.amount / totalExpense) * 100 : 0,
+    }))
+    .sort((a, b) => b.percentage - a.percentage);
 
   return (
     <div className="rounded-2xl p-4 border border-border/50">
@@ -37,10 +45,8 @@ function MonthlyCategoryExpense({ list }: { list: ITransactionList[] }) {
                 <span className="font-medium">{stat.name}</span>
               </div>
               <div className="text-right">
-                <p className="font-semibold">{stat.amount.toLocaleString()}원</p>
-                <p className="text-xs text-muted-foreground">
-                  {stat.percentage.toFixed(1)}%
-                </p>
+                <p className="font-semibold">{formatKRW(stat.amount)}원</p>
+                <p className="text-xs text-muted-foreground">{stat.percentage.toFixed(1)}%</p>
               </div>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -53,7 +59,7 @@ function MonthlyCategoryExpense({ list }: { list: ITransactionList[] }) {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-export default MonthlyCategoryExpense
+export default MonthlyCategoryExpense;
