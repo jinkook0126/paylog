@@ -8,14 +8,10 @@ import {
   type MetaFunction,
 } from 'react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
 import { Toaster } from './components/ui/sonner';
 import type { Route } from './+types/root';
 import { queryClient } from './lib/query-client';
 import './app.css';
-
-dayjs.locale('ko');
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

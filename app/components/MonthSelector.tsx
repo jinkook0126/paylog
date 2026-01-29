@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import dayjs from 'dayjs';
+import dayjs from '~/lib/dayjs';
 
 function MonthSelector({
   currentDate,

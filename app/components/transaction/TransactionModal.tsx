@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { Banknote, CreditCard, FileText, ImageIcon, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
@@ -16,6 +15,7 @@ import {
 import { Button } from '../ui/button';
 import { useDeleteTransactionMutation } from '~/query/transaction';
 import { useDrawerStore } from '~/store/drawer';
+import dayjs from '~/lib/dayjs';
 
 function TransactionModal() {
   const { open, transaction, closeModal } = useModalStore();

@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from '~/lib/dayjs';
 import type { ITransactionList } from '~/databases/transaction';
 import TransactionItem from './TransactionItem';
 
