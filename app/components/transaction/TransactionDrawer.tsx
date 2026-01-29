@@ -13,10 +13,9 @@ import TransactionDrawerForm from './TransactionDrawerForm';
 import { useDrawerStore } from '~/store/drawer';
 
 function TransactionDrawer() {
-  const { drawerOpen, drawerTransaction, closeDrawer } = useDrawerStore();
+  const { drawerOpen, drawerTransaction, closeDrawer, openDrawer } = useDrawerStore();
   const [transactionType, setTransactionType] = useState<'expense' | 'income'>('expense');
 
-  // drawerTransaction이 있으면 해당 타입으로 설정
   useEffect(() => {
     if (drawerTransaction) {
       setTransactionType(drawerTransaction.categories.type as 'expense' | 'income');
@@ -24,13 +23,11 @@ function TransactionDrawer() {
   }, [drawerTransaction]);
 
   return (
-    <Drawer open={drawerOpen} onOpenChange={(open) => !open && closeDrawer()}>
+    <Drawer open={drawerOpen} onOpenChange={(open) => (open ? openDrawer() : closeDrawer())}>
       <DrawerTrigger className="-top-4 relative" asChild>
-        <Button className="flex flex-col items-center gap-1 py-2 px-3 rounded-xl transition-all duration-200">
-          <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-card-lg">
-            <Plus className="w-6 h-6 text-primary-foreground" />
-          </div>
-        </Button>
+        <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-card-lg">
+          <Plus className="w-6 h-6 text-primary-foreground" />
+        </div>
       </DrawerTrigger>
       <DrawerContent className="max-w-md mx-auto h-[80vh]">
         <div className="h-full overflow-y-auto">
