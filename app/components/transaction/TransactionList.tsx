@@ -15,7 +15,7 @@ function TransactionList({ list }: { list: ITransactionList[] }) {
 
   const grouped = list.reduce(
     (acc, item) => {
-      const date = dayjs(item.created_at).format('YYYY-MM-DD');
+      const date = dayjs.utc(item.created_at).tz('Asia/Seoul').format('YYYY-MM-DD');
       if (!acc[date]) {
         acc[date] = [];
       }
@@ -32,14 +32,6 @@ function TransactionList({ list }: { list: ITransactionList[] }) {
       {sortedDates.map((dateKey) => (
         <div key={dateKey}>
           <p className="text-sm font-medium text-muted-foreground mb-2 px-2">
-            {/* {dayjs(dateKey).format('M월 DD일 dddd')} */}
-            hello world
-          </p>
-        </div>
-      ))}
-      {/* {sortedDates.map((dateKey) => (
-        <div key={dateKey}>
-          <p className="text-sm font-medium text-muted-foreground mb-2 px-2">
             {dayjs(dateKey).format('M월 DD일 dddd')}
           </p>
           <div className="rounded-2xl px-4 border border-border/50">
@@ -48,7 +40,7 @@ function TransactionList({ list }: { list: ITransactionList[] }) {
             ))}
           </div>
         </div>
-      ))} */}
+      ))}
     </div>
   );
 }
