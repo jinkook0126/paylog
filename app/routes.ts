@@ -8,6 +8,7 @@ export default [
     route("settings", "routes/index.setting.tsx"),
   ]),
   route("api/category", "routes/api.category.ts"),
+  route("api/health", "routes/api.health.ts"),
   route("api/transaction", "routes/api.transaction.ts"),
   route("api/stats", "routes/api.stats.ts"),
 ] satisfies RouteConfig;

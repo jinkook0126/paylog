@@ -63,7 +63,7 @@ function TransactionModal() {
                 {formatKRW(transaction.amount)}원
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                {dayjs(transaction.created_at).format('YYYY년 M월 D일 dddd')}
+                {dayjs(transaction.created_at).format('YYYY년 M월 D일 dddd HH시 mm분')}
               </p>
               {isExpense && transaction.paymentMethod && (
                 <div className="flex items-center justify-center gap-1 mt-2 text-sm text-muted-foreground">

@@ -37,6 +37,10 @@ const transactionSchema = z.object({
   memo: z.string().optional(),
   picture: z.string().nullable().optional(),
   date: z.date(),
+  time: z
+    .string()
+    .min(1, '시간을 입력해주세요')
+    .regex(/^\d{2}:\d{2}$/, '시간 형식이 올바르지 않습니다'),
 });
 
 type TransactionFormData = z.infer<typeof transactionSchema>;
@@ -68,6 +72,7 @@ function TransactionDrawerForm({
       memo: '',
       picture: null,
       date: dayjs().toDate(),
+      time: dayjs().format('HH:mm'),
     },
   });
   const btnText = transaction ? '수정하기' : '추가하기';
@@ -82,6 +87,7 @@ function TransactionDrawerForm({
         memo: transaction.memo || '',
         picture: transaction.picture || null,
         date: dayjs(transaction.created_at).toDate(),
+        time: dayjs(transaction.created_at).format('HH:mm'),
       });
     } else {
       reset({
@@ -92,6 +98,7 @@ function TransactionDrawerForm({
         memo: '',
         picture: null,
         date: dayjs().toDate(),
+        time: dayjs().format('HH:mm'),
       });
     }
   }, [transaction, reset]);
@@ -107,6 +114,9 @@ function TransactionDrawerForm({
 
   const onSubmit = (data: TransactionFormData) => {
     const payment = transactionType === 'expense' ? data.paymentMethod || 'card' : 'cash';
+    const [hour, minute] = data.time.split(':').map(Number);
+    const createdAt = dayjs(data.date).hour(hour).minute(minute).second(0).millisecond(0).toDate();
+
     const formData = {
       category: data.category,
       amount: data.amount,
@@ -114,7 +124,7 @@ function TransactionDrawerForm({
       picture: data.picture ?? null,
       memo: data.memo ?? null,
       name: data.name,
-      created_at: data.date,
+      created_at: createdAt,
     };
     if (transaction) {
       updateTransactionMutate(
@@ -179,15 +189,31 @@ function TransactionDrawerForm({
         </Field>
       )}
       <Field className="mb-6">
-        <p className="text-stone-500 text-md">날짜</p>
-        <FieldContent>
-          <Controller
-            name="date"
-            control={control}
-            render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
-          />
-          <FieldError errors={errors.date ? [errors.date] : []} />
-        </FieldContent>
+        <p className="text-stone-500 text-md">날짜 및 시간</p>
+        <div className="flex gap-2">
+          <FieldContent>
+            <Controller
+              name="date"
+              control={control}
+              render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
+            />
+            <FieldError errors={errors.date ? [errors.date] : []} />
+          </FieldContent>
+          <FieldContent>
+            <Controller
+              name="time"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  type="time"
+                  value={field.value}
+                  onChange={field.onChange}
+                  className="text-lg h-12"
+                />
+              )}
+            />
+          </FieldContent>
+        </div>
       </Field>
       <Field className="mb-6">
         <p className="text-stone-500 text-md">금액</p>
