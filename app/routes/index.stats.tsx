@@ -16,11 +16,12 @@ export const meta: MetaFunction = () => [
 
 export async function loader() {
   const month = dayjs().format('YYYY-MM');
-  return { month };
+  const initialDate = dayjs(month).toDate().getTime();
+  return { initialDate };
 }
 function SettingView() {
-  const { month } = useLoaderData<typeof loader>();
-  const [currentDate, setCurrentDate] = useState<Date>(dayjs(month).toDate());
+  const { initialDate } = useLoaderData<typeof loader>();
+  const [currentDate, setCurrentDate] = useState<Date>(() => new Date(initialDate));
   const onDateChange = (date: Date) => {
     setCurrentDate(date);
   };
