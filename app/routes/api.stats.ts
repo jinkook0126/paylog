@@ -20,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       where: {
         created_at: {
           gte: startOfYear.toDate(),
-          lte: endOfYear.toDate(),
+          lt: endOfYear.toDate(),
         },
         categories: {
           type: 'expense',

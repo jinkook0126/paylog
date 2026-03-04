@@ -37,7 +37,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const date = url.searchParams.get('date'); // YYYY-MM 형식
-    const base = dayjs(date, 'YYYY-MM');
+    const base = dayjs.tz(date, 'YYYY-MM', 'Asia/Seoul');
     const startOfMonth = base.startOf('month');
     const endOfMonth = base.add(1, 'month').startOf('month');
 
@@ -45,7 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       where: {
         created_at: {
           gte: startOfMonth.toDate(),
-          lte: endOfMonth.toDate(),
+          lt: endOfMonth.toDate(),
         },
       },
       include: {
